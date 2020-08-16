@@ -2,21 +2,46 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"image/jpeg"
 	"io/ioutil"
 	"log"
+	"os"
+	"runtime"
+	"strings"
+	"time"
 
 	"github.com/go-vgo/robotgo"
 	"golang.org/x/image/bmp"
 )
 
 func main() {
-	print("TESTING")
-	robotgo.ActiveName("wowo")
+	start := time.Now()
 
-	takeScreenshot()
+	var action string = strings.TrimSpace(os.Args[1])
 
-	// log.Print(text)
+	if action == "activate" {
+		var window string = strings.TrimSpace(os.Args[2])
+		robotgo.ActiveName(window)
+	}
+	if action == "screenshot" {
+		if runtime.GOOS != "darwin" {
+			println("OS not supported")
+			return
+		}
+		robotgo.KeyTap("3", "shift", "command")
+
+		// files, err := filepath.Glob("*")
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+
+	}
+
+	// robotgo.KeyTap("tab", "alt")
+	println("TESTING")
+
+	fmt.Println(time.Since(start))
 
 }
 
