@@ -16,7 +16,7 @@ jobs:
       - run: |
           GOOS=darwin
           GORCH=amd64
-          go build -o build/robot-go-mac -ldflags "-w"
+          go build -o build/robot-go-mac -ldflags "-w -s"
           ./build/robot-go-mac screenshot testing-macos
 
       - name: macos release build for github
