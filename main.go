@@ -1,11 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"image/jpeg"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/user"
 	"runtime"
@@ -13,7 +10,6 @@ import (
 	"time"
 
 	"github.com/go-vgo/robotgo"
-	"golang.org/x/image/bmp"
 )
 
 func main() {
@@ -31,6 +27,7 @@ func main() {
 			return
 		}
 		robotgo.KeyTap("3", "shift", "command")
+		time.Sleep(1 * time.Second)
 
 		myself, _ := user.Current()
 		desktop := myself.HomeDir + "/Desktop/"
@@ -38,10 +35,9 @@ func main() {
 
 		fileName := strings.TrimSpace(os.Args[2])
 
-		filtered := []os.FileInfo{}
+		filtered := []string{}
 
-		for index, file := range files {
-			time := file.ModTime()
+		for _, file := range files {
 			name := file.Name()
 			if file.IsDir() {
 				continue
@@ -49,11 +45,10 @@ func main() {
 			if !strings.Contains(name, ".png") {
 				continue
 			}
-			filtered = append(filtered, file)
-			println(index, file.Name(), time.String())
+			filtered = append(filtered, file.Name())
 		}
 
-		filepath := desktop + filtered[0].Name()
+		filepath := desktop + filtered[len(filtered)-1]
 
 		file, _ := ioutil.ReadFile(filepath)
 
@@ -69,29 +64,4 @@ func main() {
 
 	fmt.Println(time.Since(start))
 
-}
-
-func takeScreenshot() {
-	width, height := robotgo.GetScreenSize()
-
-	bitMap := robotgo.CaptureScreen(0, 0, width, height)
-	defer robotgo.FreeBitmap(bitMap)
-
-	bs := robotgo.ToBitmapBytes(bitMap)
-	img, err := bmp.Decode(bytes.NewReader(bs))
-	if err != nil {
-		log.Println("bmp.Decode err is: ", err)
-		return
-	}
-
-	b := new(bytes.Buffer)
-	err = jpeg.Encode(b, img, &jpeg.Options{Quality: 100})
-	if err != nil {
-		log.Println("jpeg.Encode err is: ", err)
-		return
-	}
-	bts := b.Bytes()
-	ioutil.WriteFile("images/out.jpg", bts, 0666)
-	println("FILE WRITTED")
-	// return bts
 }
