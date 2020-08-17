@@ -17,6 +17,18 @@ func main() {
 
 	var action string = strings.TrimSpace(os.Args[1])
 
+	if action == "maximize" {
+		var window string = strings.TrimSpace(os.Args[2])
+		robotgo.ActiveName(window)
+		pid := robotgo.GetPID()
+		println("PID", pid)
+		// active, _ := robotgo.FindIds(window)
+		// for i, id := range active {
+		// 	println(i, id)
+		// }
+		robotgo.MaxWindow(pid)
+	}
+
 	if action == "activate" {
 		var window string = strings.TrimSpace(os.Args[2])
 		robotgo.ActiveName(window)
