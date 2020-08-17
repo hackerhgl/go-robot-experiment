@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/user"
 	"runtime"
 	"strings"
 	"time"
@@ -31,15 +32,40 @@ func main() {
 		}
 		robotgo.KeyTap("3", "shift", "command")
 
-		// files, err := filepath.Glob("*")
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
+		myself, _ := user.Current()
+		desktop := myself.HomeDir + "/Desktop/"
+		files, _ := ioutil.ReadDir(desktop)
+
+		fileName := strings.TrimSpace(os.Args[2])
+
+		filtered := []os.FileInfo{}
+
+		for index, file := range files {
+			time := file.ModTime()
+			name := file.Name()
+			if file.IsDir() {
+				continue
+			}
+			if !strings.Contains(name, ".png") {
+				continue
+			}
+			filtered = append(filtered, file)
+			println(index, file.Name(), time.String())
+		}
+
+		filepath := desktop + filtered[0].Name()
+
+		file, _ := ioutil.ReadFile(filepath)
+
+		err := ioutil.WriteFile(fileName+".png", file, 0777)
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		os.Remove(filepath)
 
 	}
-
-	// robotgo.KeyTap("tab", "alt")
-	println("TESTING")
 
 	fmt.Println(time.Since(start))
 
