@@ -20,13 +20,27 @@ func main() {
 	if action == "maximize" {
 		var window string = strings.TrimSpace(os.Args[2])
 		robotgo.ActiveName(window)
+
 		pid := robotgo.GetPID()
-		println("PID", pid)
+		x, y, width, height := robotgo.GetBounds(pid)
+		println("x:", x)
+		println("y:", y)
+		println("width:", width)
+		println("height:", height)
+
+		offX := (width / 2) + x
+		offY := 15 + x
+
+		robotgo.Move(offX, offY)
+
+		robotgo.MouseClick("left", true)
+
+		// println("PID", pid)
 		// active, _ := robotgo.FindIds(window)
 		// for i, id := range active {
 		// 	println(i, id)
 		// }
-		robotgo.MaxWindow(pid)
+		// robotgo.MaxWindow(pid)
 	}
 
 	if action == "activate" {
